@@ -1,0 +1,33 @@
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+
+def data_process(data):
+    x = []
+    inc_angles = []
+    y = []
+
+    for item in data:
+        # 数据重新写为75x75的图片，并堆叠在一起
+        band1 = np.array(item['band_1']).reshape(75, 75)
+        band2 = np.array(item['band_2']).reshape(75, 75)
+        image = np.stack([band1, band2], axis=-1)
+        x.append(image)
+        # 处理入射角
+        inc = item.get('inc_angle')
+        if inc == 'na' or inc is None:
+            inc_angles.append(-999)  # 用特殊值标记缺失
+        else:
+            inc_angles.append(float(inc))
+        if 'is_iceberg' in item:
+            y.append(item['is_iceberg'])
+
+    x = np.array(x)
+    inc_angles = np.array(inc_angles).reshape(-1, 1)
+    # 处理缺失值：用中位数填充
+    median_inc = np.median(inc_angles[inc_angles != -999])
+    inc_angles[inc_angles == -999] = median_inc
+    # 标准化入射角
+    scaler = StandardScaler()
+    inc_angles = scaler.fit_transform(inc_angles)
+
+    return x, inc_angles, np.array(y)
