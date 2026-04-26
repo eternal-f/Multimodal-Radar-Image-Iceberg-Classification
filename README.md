@@ -128,16 +128,16 @@ The solution is inspired by top-performing teams and uses a multi-stage pipeline
 KNN仅使用`inc_angle`和测试集上的CNN伪标签
 通过`inc_angle`（小数点后4位）识别高度相似的样本
 
-### 4. CNN + KNN + 提升
+### 4. CNN + KNN + Boosting
 **对数损失**：~0.01
 使用LightGBM，特征包括：CNN预测值和KNN预测值
 
-### 5. CNN投票 + KNN + 提升
+### 5. CNN Voting + KNN + Boosting
 **对数损失**：0.096
 集成4个CNN，采用不同的增强和dropout设置
 
-### 6. 微调 + 9模型投票
+### 6. 微调
 **对数损失**：0.084
-KNN调整为n=30
+KNN调整为n=30,增加CNN投票模型数量。
 最终将概率裁剪到`[0.001, 0.999]`
 
