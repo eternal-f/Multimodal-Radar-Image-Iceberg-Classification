@@ -34,7 +34,8 @@ Root/
 ├── KNN/                          # Pure KNN Version  
 ├── Boosting/                     # CNN + KNN + Boosting  
 └── Final/                        # CNN Voting + KNN + Boosting + Fine-tuning  
-Each file has Reame.md to show the run process.  
+Each file has Reame.md to show the run process.     
+Please ensure that the path does not contain any Chinese characters.
 
 ## Method Evolution
 
@@ -105,6 +106,7 @@ Each file has Reame.md to show the run process.
 ├── Boosting/                     # CNN + KNN + Boosting  
 └── Final/                        # CNN Voting + KNN + Boosting + Fine-tuning  
 每个文件夹都有Readme.md展示运行流程。  
+注意路径不要有中文。  
 
 ## 方法演进
 ### 1. 纯CNN
