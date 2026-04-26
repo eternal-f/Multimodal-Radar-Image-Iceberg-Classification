@@ -26,18 +26,15 @@ The solution is inspired by top-performing teams and uses a multi-stage pipeline
 - Avoid extreme probability thresholds (e.g., mapping to 0.99/0.001) – simple clipping to `[0.001, 0.999]` works best.
 
 ## Repository Structure
-.
-├── Data/ # Training and test JSON files (not included)
-├── save_model/ # Saved Keras models per fold
-├── train_predict/ # CNN predictions for train/test sets
-├── knn/ # Output features from KNN + CNN
-├── Dataprocess.py # Data loading, preprocessing, augmentation
-├── Model.py # CNN architecture (without inc_angle)
-├── Train.py # Training with cross-validation and augmentation
-├── KNN.py # KNN clustering using inc_angle and CNN predictions
-├── GBM.py # LightGBM boosting on CNN + KNN features
-└── README.md
-
+Root/ 
+├── README.md 
+├── Requirement.txt 
+├── pureCNN/                      # Pure CNN Version 
+├── Augmentation/                 # CNN with data augmentation 
+├── KNN/                          # Pure KNN Version 
+├── Boosting/                     # CNN + KNN + Boosting 
+└── Final/                        # CNN Voting + KNN + Boosting + Fine-tuning 
+Each file has Reame.md to show the run process. 
 
 ## Method Evolution
 
@@ -98,17 +95,15 @@ The solution is inspired by top-performing teams and uses a multi-stage pipeline
 - 避免极端概率映射（例如映射到0.99/0.001） – 简单的裁剪到`[0.001, 0.999]`效果最佳。
  
 ## 文件结构
-.
-├── Data/ # 训练和测试JSON文件（未包含）
-├── save_model/ # 每折保存的Keras模型
-├── train_predict/ # 训练集/测试集的CNN预测结果
-├── knn/ # KNN + CNN 输出的特征
-├── Dataprocess.py # 数据加载、预处理、增强
-├── Model.py # CNN架构（不含inc_angle）
-├── Train.py # 使用交叉验证和增强的训练
-├── KNN.py # 基于inc_angle和CNN预测的KNN聚类
-├── GBM.py # 基于CNN+KNN特征的LightGBM提升
-└── README.md
+根目录/ 
+├── README.md 
+├── Requirement.txt 
+├── pureCNN/                      # 单CNN版本 
+├── Augmentation/                 # 带数据增强的CNN 
+├── KNN/                          # 单CNN版本 
+├── Boosting/                     # CNN + KNN + Boosting 
+└── Final/                        # CNN Voting + KNN + Boosting + Fine-tuning 
+每个文件夹都有Readme.md展示运行流程。 
 
 ## 方法演进
 ### 1. 纯CNN
