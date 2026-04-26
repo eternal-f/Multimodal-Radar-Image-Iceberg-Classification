@@ -26,15 +26,15 @@ The solution is inspired by top-performing teams and uses a multi-stage pipeline
 - Avoid extreme probability thresholds (e.g., mapping to 0.99/0.001) – simple clipping to `[0.001, 0.999]` works best.
 
 ## Repository Structure
-Root/ 
-├── README.md 
-├── Requirement.txt 
-├── pureCNN/                      # Pure CNN Version 
-├── Augmentation/                 # CNN with data augmentation 
-├── KNN/                          # Pure KNN Version 
-├── Boosting/                     # CNN + KNN + Boosting 
-└── Final/                        # CNN Voting + KNN + Boosting + Fine-tuning 
-Each file has Reame.md to show the run process. 
+Root/  
+├── README.md  
+├── Requirement.txt  
+├── pureCNN/                      # Pure CNN Version  
+├── Augmentation/                 # CNN with data augmentation  
+├── KNN/                          # Pure KNN Version  
+├── Boosting/                     # CNN + KNN + Boosting  
+└── Final/                        # CNN Voting + KNN + Boosting + Fine-tuning  
+Each file has Reame.md to show the run process.  
 
 ## Method Evolution
 
@@ -95,15 +95,15 @@ Each file has Reame.md to show the run process.
 - 避免极端概率映射（例如映射到0.99/0.001） – 简单的裁剪到`[0.001, 0.999]`效果最佳。
  
 ## 文件结构
-根目录/ 
-├── README.md 
-├── Requirement.txt 
-├── pureCNN/                      # 单CNN版本 
-├── Augmentation/                 # 带数据增强的CNN 
-├── KNN/                          # 单CNN版本 
-├── Boosting/                     # CNN + KNN + Boosting 
-└── Final/                        # CNN Voting + KNN + Boosting + Fine-tuning 
-每个文件夹都有Readme.md展示运行流程。 
+根目录/  
+├── README.md  
+├── Requirement.txt  
+├── pureCNN/                      # 单CNN版本  
+├── Augmentation/                 # 带数据增强的CNN  
+├── KNN/                          # 单CNN版本  
+├── Boosting/                     # CNN + KNN + Boosting  
+└── Final/                        # CNN Voting + KNN + Boosting + Fine-tuning  
+每个文件夹都有Readme.md展示运行流程。  
 
 ## 方法演进
 ### 1. 纯CNN
