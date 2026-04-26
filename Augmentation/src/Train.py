@@ -1,0 +1,118 @@
+import json
+import numpy as np
+import tensorflow as tf
+from keras import models
+from sklearn.metrics import log_loss
+from tensorflow.python.lib.io import file_io
+from tensorflow.keras.optimizers import Adam
+from sklearn.model_selection import StratifiedKFold
+from Dataprocess import data_process, create_augmentation
+from Model import create_model_without_inc
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau,ModelCheckpoint
+
+SEED=np.random.randint(999999999)
+np.random.seed(SEED)
+
+def initial_model(x_train, y_train, x_val, y_val, h, seed):
+    """训练模型"""
+    model = create_model_without_inc()
+    # 优化器（使用较低学习率）
+    optimizer = Adam(learning_rate=1e-3)
+    model.compile(
+        optimizer=optimizer,
+        loss='binary_crossentropy',
+        metrics=['accuracy', tf.keras.metrics.AUC(name='auc')]
+    )
+
+    # 回调函数
+    call_backs = [
+        EarlyStopping(
+            monitor='val_loss',
+            patience=30,
+            restore_best_weights=True,
+            verbose=1
+        ),
+        ReduceLROnPlateau(
+            monitor='val_loss',
+            factor=0.5,
+            patience=10,
+            min_lr=1e-6,
+            verbose=1
+        ),
+        ModelCheckpoint(
+            f'./save_model/best_model_{h}.keras',
+            monitor='val_auc',
+            mode='max',
+            save_best_only=True,
+            verbose=1
+        )
+    ]
+
+    # 训练
+    history = model.fit(
+        create_augmentation(x_train, y_train, seed),
+        validation_data=(x_val, y_val),
+        epochs=100,
+        steps_per_epoch=64,
+        callbacks=call_backs,
+        verbose=1
+    )
+
+    return model, history
+
+def save_predict(directory, filename, arr):
+    opath = directory + '/' + filename
+    with file_io.FileIO(opath, 'w+') as output_f:
+        np.save(output_f, arr)
+
+def print_history(h):
+    h_loss = zip(h.history['loss'], h.history['val_loss'])
+    for idx, loss in enumerate(h_loss):
+        print('Step {} loss: {}, val_loss: {}'.format(idx, loss[0], loss[1]))
+
+
+def train_model():
+    print("SEED %d" % SEED)
+
+    with open('./Data/train.json', 'r') as f:
+        train_data = json.load(f)
+
+    train_bands, train_inc, label = data_process(train_data)
+    kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
+    for fold_id, (train_idx, val_idx) in enumerate(kf.split(train_bands, label)):
+        x_train, y_train = train_bands[train_idx], label[train_idx]
+        x_val, y_val = train_bands[val_idx], label[val_idx]
+        model, history = initial_model(x_train, y_train, x_val, y_val, fold_id,SEED)
+        print_history(history)
+
+    with open('./Data/test.json', 'r') as f:
+        test_data = json.load(f)
+
+    test_bands, test_inc, test_label = data_process(test_data)
+
+    cv_train_predict, cv_test_predict, cv_scores = np.zeros(len(train_bands)), [], []
+    for fold_id, (train_idx, val_idx) in enumerate(kf.split(train_bands, label)):
+        m = models.load_model(f'./save_model/best_model_{fold_id}.keras')
+
+        x_val, y_val = train_bands[val_idx], label[val_idx]
+        val_orig_predictions = m.predict(x_val, batch_size=64).squeeze()
+        val_flip_predictions = m.predict(np.flip(x_val, axis=1), batch_size=64).squeeze()
+        cv_train_predict[val_idx] = (val_orig_predictions + val_flip_predictions) * 0.5
+        cv_scores.append(log_loss(y_val, cv_train_predict[val_idx]))
+
+        test_orig_predictions = m.predict(test_bands).squeeze()
+        test_flip_predictions = m.predict(np.flip(test_bands, axis=1)).squeeze()
+        cv_test_predict.append((test_orig_predictions + test_flip_predictions) * 0.5)
+    cv_test_predict = np.mean(cv_test_predict, axis=0)
+
+    train_predict_file = 'train_predict_{}'.format(SEED)
+    save_predict('./train_predict', train_predict_file, cv_train_predict)
+
+    test_predict_file = 'test_predict_{}'.format(SEED)
+    save_predict('./train_predict', test_predict_file, cv_test_predict)
+
+    print('Best validation scores for each fold: {}'.format(cv_scores))
+    print('CV log loss: {}'.format(log_loss(label, cv_train_predict)))
+
+if __name__ == '__main__':
+    train_model()
