@@ -71,7 +71,7 @@ Each file has Reame.md to show the run process.
 # 中文版
 # 多模态雷达图像冰山分类 - Kaggle竞赛
 
-本仓库包含**Statoil/C-CORE冰山探测挑战赛**的完整解决方案。竞赛目标是通过CNN集成、KNN聚类和梯度提升的组合，对雷达图像进行冰山或船舶的二分类。（竞赛链接：https://www.kaggle.com/competitions/statoil-iceberg-classifier-challenge/leaderboard)。**训练集验证集请从竞赛网址下载。**
+本仓库包含**Statoil/C-CORE冰山探测挑战赛**的完整解决方案。竞赛目标是通过CNN集成、KNN聚类和梯度提升的组合，对雷达图像进行冰山或船舶的二分类。(竞赛链接：https://www.kaggle.com/competitions/statoil-iceberg-classifier-challenge/leaderboard)。**训练集验证集请从竞赛网址下载。**
 
 ## 排行榜表现
 - **本组最终对数损失**：0.08415
