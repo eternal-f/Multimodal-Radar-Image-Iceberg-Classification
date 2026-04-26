@@ -21,7 +21,7 @@ The solution is inspired by top-performing teams and uses a multi-stage pipeline
 
 - CNN alone achieves only **LogLoss ~0.19**.
 - KNN alone achieves **LogLoss ~0.20**.
-- **Boosting (CNN + KNN + GBM)** brings LogLoss down to **~0.01** on CV, with final test score **0.084**.
+- **Boosting (CNN + KNN + GBM)** brings LogLoss down to **~0.1** on CV, with final test score **0.084**.
 - `inc_angle` is a critical feature – identical values (to 4 decimal places) share the same label 97% of the time.
 - Avoid extreme probability thresholds (e.g., mapping to 0.99/0.001) – simple clipping to `[0.001, 0.999]` works best.
 
@@ -93,7 +93,7 @@ The solution is inspired by top-performing teams and uses a multi-stage pipeline
 ## 关键发现
 - 仅用CNN只能达到对数损失约**0.19**。
 - 仅用KNN只能达到对数损失约**0.20**。
-- 提升方法（**CNN + KNN + GBM**） 在交叉验证中将对数损失降至约**0.01**，最终测试得分为**0.084**。
+- 提升方法（**CNN + KNN + GBM**） 在交叉验证中将对数损失降至约**0.1**，最终测试得分为**0.084**。
 - `inc_angle`是关键特征 – 在小数点后4位相同的情况下，97%的样本标签一致。
 - 避免极端概率映射（例如映射到0.99/0.001） – 简单的裁剪到`[0.001, 0.999]`效果最佳。
  
