@@ -11,7 +11,7 @@ This repository contains a complete solution for the **Statoil/C-CORE Iceberg De
 
 ## Approach Overview
 
-The solution is inspired by top-performing teams (Top 1, 2, 4) and uses a multi-stage pipeline:
+The solution is inspired by top-performing teams and uses a multi-stage pipeline:
 
 1. **CNN Ensemble** – Multiple convolutional neural networks trained with data augmentation.
 2. **KNN Clustering** – Uses incident angle (`inc_angle`) similarity to refine predictions.
@@ -74,7 +74,7 @@ The solution is inspired by top-performing teams (Top 1, 2, 4) and uses a multi-
 # 中文版
 # 多模态雷达图像冰山分类 - Kaggle竞赛
 
-本仓库包含Statoil/C-CORE冰山探测挑战赛的完整解决方案。竞赛目标是通过CNN集成、KNN聚类和梯度提升的组合，对雷达图像进行冰山或船舶的二分类。（竞赛链接：https://www.kaggle.com/competitions/statoil-iceberg-classifier-challenge/leaderboard） 
+本仓库包含**Statoil/C-CORE冰山探测挑战赛**的完整解决方案。竞赛目标是通过CNN集成、KNN聚类和梯度提升的组合，对雷达图像进行冰山或船舶的二分类。（竞赛链接：https://www.kaggle.com/competitions/statoil-iceberg-classifier-challenge/leaderboard） 
 
 ## 排行榜表现
 - **本组最终对数损失**：0.08415
@@ -84,19 +84,19 @@ The solution is inspired by top-performing teams (Top 1, 2, 4) and uses a multi-
 - **第2名对数损失**：0.08555
 
 ## 方案概述
-本方案受前几名团队（第1、2、4名）启发，采用多阶段流程： 
+本方案受前几名团队启发，采用多阶段流程： 
  
 1. **CNN集成** – 使用数据增强训练的多个卷积神经网络。 
-2. **KNN聚类** – 利用入射角（inc_angle）相似性优化预测。 
+2. **KNN聚类** – 利用入射角（`inc_angle`）相似性优化预测。 
 3. **梯度提升** – 融合CNN和KNN的输出进行最终预测。 
 
 ## 关键发现
-- 仅用CNN只能达到对数损失约0.19。
-- 仅用KNN只能达到对数损失约0.20。
-- 提升方法（CNN + KNN + GBM） 在交叉验证中将对数损失降至约0.01，最终测试得分为0.084。
-- inc_angle是关键特征 – 在小数点后4位相同的情况下，97%的样本标签一致。
-- 避免极端概率映射（例如映射到0.99/0.001） – 简单的裁剪到[0.001, 0.999]效果最佳。
-
+- 仅用CNN只能达到对数损失约**0.19**。
+- 仅用KNN只能达到对数损失约**0.20**。
+- 提升方法（**CNN + KNN + GBM**） 在交叉验证中将对数损失降至约**0.01**，最终测试得分为**0.084**。
+- `inc_angle`是关键特征 – 在小数点后4位相同的情况下，97%的样本标签一致。
+- 避免极端概率映射（例如映射到0.99/0.001） – 简单的裁剪到`[0.001, 0.999]`效果最佳。
+ 
 ## 文件结构
 .
 ├── Data/ # 训练和测试JSON文件（未包含）
@@ -111,45 +111,33 @@ The solution is inspired by top-performing teams (Top 1, 2, 4) and uses a multi-
 └── README.md
 
 ## 方法演进
-1. 纯CNN
-对数损失：0.24
+### 1. 纯CNN
+- **对数损失**：0.24
+- 双波段图像（75×75×2）+ inc_angle 输入CNN
+- 大量使用批归一化和dropout
+- 早停与学习率调度
 
-双波段图像（75×75×2）+ inc_angle 输入CNN
+### 2. CNN + 数据增强
+**对数损失**：0.19
+- 从CNN输入中移除`inc_angle`（让网络更专注于图像特征）
+- 使用带旋转、平移、翻转的数据增强
+- 将模型深度减少到3个卷积层（32/64/128），避免过拟合
 
-大量使用批归一化和dropout
+### 3. KNN
+**对数损失**：0.20
+KNN仅使用`inc_angle`和测试集上的CNN伪标签
+通过`inc_angle`（小数点后4位）识别高度相似的样本
 
-早停与学习率调度
-
-2. CNN + 数据增强
-对数损失：0.19
-
-从CNN输入中移除inc_angle（让网络更专注于图像特征）
-
-使用带旋转、平移、翻转的数据增强
-
-将模型深度减少到3个卷积层（32/64/128），避免过拟合
-
-3. KNN
-对数损失：0.20
-
-KNN仅使用inc_angle和测试集上的CNN伪标签
-
-通过inc_angle（小数点后4位）识别高度相似的样本
-
-4. CNN + KNN + 提升
-对数损失：~0.01
-
+### 4. CNN + KNN + 提升
+**对数损失**：~0.01
 使用LightGBM，特征包括：CNN预测值和KNN预测值
 
-5. CNN投票 + KNN + 提升
-对数损失：0.096
-
+### 5. CNN投票 + KNN + 提升
+**对数损失**：0.096
 集成4个CNN，采用不同的增强和dropout设置
 
-6. 微调 + 9模型投票
-对数损失：0.084
-
-KNN使用n=30个邻居
-
-最终将概率裁剪到[0.001, 0.999]
+### 6. 微调 + 9模型投票
+**对数损失**：0.084
+KNN调整为n=30
+最终将概率裁剪到`[0.001, 0.999]`
 
